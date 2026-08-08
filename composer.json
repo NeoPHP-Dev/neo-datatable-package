@@ -1,6 +1,6 @@
 {
-    "name": "neophp/skeleton-package",
-    "description": "One-line description of what this package does",
+    "name": "neophp/datatable-package",
+    "description": "Server-side data table with real SQL pagination, sorting, and search for NeoPHP",
     "type": "library",
     "license": "MIT",
     "require": {
@@ -8,7 +8,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Vendor\\NeoPHP\\SkeletonPackage\\": "src/"
+            "Vendor\\NeoPHP\\DataTablePackage\\": "src/"
         }
     }
 }
