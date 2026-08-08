@@ -1,0 +1,59 @@
+{#
+    Reusable server-rendered data table — no AJAX, plain GET links/forms.
+    Theming via --dt-* CSS custom properties.
+
+    Usage:
+    {% import '@DataTable/components/DataTable.macro.html.twig' as DataTable %}
+    {{ DataTable.render(table) }}
+#}
+{% macro render(table, baseUrl = null) %}
+    <div class="dt-wrapper">
+        <form method="get" class="dt-search-form">
+            <input type="hidden" name="sort" value="{{ table.sort }}">
+            <input type="hidden" name="direction" value="{{ table.direction }}">
+            <input type="text" name="search" value="{{ table.search }}" placeholder="Search…" class="dt-search-input">
+            <button type="submit" class="dt-search-btn">Search</button>
+        </form>
+
+        <table class="dt-table">
+            <thead>
+            <tr>
+                {% for column in table.columns %}
+                    <th class="dt-th{{ table.sort == column.key ? ' dt-th-active' : '' }}">
+                        {% if column.sortable %}
+                            {% set nextDirection = (table.sort == column.key and table.direction == 'asc') ? 'desc' : 'asc' %}
+                            <a href="?search={{ table.search }}&sort={{ column.key }}&direction={{ nextDirection }}" class="dt-sort-link">
+                                {{ column.label }}
+                                {% if table.sort == column.key %}
+                                    <span class="dt-sort-arrow">{{ table.direction == 'asc' ? '↑' : '↓' }}</span>
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            {{ column.label }}
+                        {% endif %}
+                    </th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in table.paginator.items %}
+                <tr class="dt-row">
+                    {% for column in table.columns %}
+                        <td class="dt-td">{{ row[column.key] }}</td>
+                    {% endfor %}
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="{{ table.columns|length }}" class="dt-empty">No results.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if table.paginator.totalPages > 1 %}
+            <div class="dt-pagination">
+                {{ paginator_links(table.paginator, baseUrl) }}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
