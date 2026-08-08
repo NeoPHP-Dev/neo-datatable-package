@@ -1,3 +1,8 @@
+## v0.3.0 — 2026-08-08
+
+- Merge branch 'main' of https://github.com/NeoPHP-Dev/neo-datatable-package
+- feat: remove unused directories
+
 ## v0.2.1 — 2026-08-08
 
 - fix: rewrite DataTableFactory using QueryBuilder for real SQL search, sort, and pagination
