@@ -1,3 +1,12 @@
+## v0.2.0 — 2026-08-08
+
+- feat: add DataTable macro reusing core paginator_links()
+- feat: add datatable.css with themable CSS custom properties
+- docs: add neo-datatable-package README
+- feat: add DataTableFactory using EntityRepository for real SQL pagination and sorting
+- feat: add DataTableResult value object
+- feat: add NeoDataTablePackage entry point
+
 ## v0.1.1 — 2026-08-08
 
 - chore: add composer.json for neo-datatable-package
