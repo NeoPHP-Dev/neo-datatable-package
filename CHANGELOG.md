@@ -1,3 +1,7 @@
+## v0.2.1 — 2026-08-08
+
+- fix: rewrite DataTableFactory using QueryBuilder for real SQL search, sort, and pagination
+
 ## v0.2.0 — 2026-08-08
 
 - feat: add DataTable macro reusing core paginator_links()
