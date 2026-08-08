@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Vendor\NeoPHP\DataTablePackage\Service;
 
+use Neo\Core\Database\DatabaseManager;
 use Neo\Core\Database\ORM\Persistence\EntityManager;
+use Neo\Core\Database\ORM\Query\QueryBuilder;
 use Neo\Core\Database\Pagination\Paginator;
 
 class DataTableFactory
 {
     public function __construct(
-        private EntityManager $em
-    ) {
-    }
+        private EntityManager $em,
+        private DatabaseManager $db,
+    ) {}
 
     public function createFromEntity(
         string $entityClass,
@@ -20,51 +22,57 @@ class DataTableFactory
         array $columns,
         array $searchableFields = [],
         int $perPage = 20,
-    ): DataTableResult
-    {
-        $repo = $this->em->getRepository($entityClass);
+    ): DataTableResult {
         $metadata = $this->em->getClassMetadata($entityClass);
 
         $search = trim($queryParams['search'] ?? '');
         $sort = $queryParams['sort'] ?? null;
-        $direction = strtolower($queryParams['direction'] ?? 'asc') === 'desc' ? 'desc' : 'asc';
-        $page = max(1, (int)($queryParams['page'] ?? 1));
+        $direction = strtolower($queryParams['direction'] ?? 'asc') === 'desc' ? 'DESC' : 'ASC';
+        $page = max(1, (int) ($queryParams['page'] ?? 1));
 
-        $criteria = [];
+        $query = QueryBuilder::for($this->db, $metadata->table);
 
         if ($search !== '' && $searchableFields !== []) {
-            $criteria['__search'] = ['fields' => $searchableFields, 'term' => $search];
+            foreach ($searchableFields as $i => $field) {
+                $column = $metadata->getColumnName($field);
+                $like = '%' . $search . '%';
+
+                if ($i === 0) {
+                    $query->where($column, 'LIKE', $like);
+                } else {
+                    $query->orWhere($column, 'LIKE', $like);
+                }
+            }
         }
 
-        $orderBy = $sort !== null && $this->isSortable($columns, $sort)
-            ? [$sort => $direction]
-            : [];
+        if ($sort !== null && $this->isSortable($columns, $sort)) {
+            $sortColumn = $metadata->getColumnName($sort);
+            $query->orderBy($sortColumn, $direction);
+        }
 
-        $total = $repo->count($criteria === [] ? [] : $this->stripSearchMarker($criteria));
-
-        $entities = $repo->findBy(
-            $this->stripSearchMarker($criteria),
-            $orderBy,
-            $perPage,
-            ($page - 1) * $perPage,
-        );
+        $paginator = $query->paginate($page, $perPage);
 
         $rows = array_map(
-            fn(object $entity) => $this->entityToRow($entity, $metadata, $columns),
-            $entities
+            fn(array $row) => $this->rowToDisplay($row, $metadata, $columns),
+            $paginator->getItems()
         );
 
-        $paginator = new Paginator($rows, $total, $page, $perPage);
+        $displayPaginator = new Paginator(
+            $rows,
+            $paginator->getTotalItems(),
+            $paginator->getCurrentPage(),
+            $paginator->getPerPage(),
+        );
 
         return new DataTableResult(
             columns: array_map(
                 fn(array $c) => ['key' => $c['key'], 'label' => $c['label'], 'sortable' => $c['sortable'] ?? false],
                 $columns
             ),
-            paginator: $paginator,
+            paginator: $displayPaginator,
             search: $search,
             sort: $sort,
-            direction: $direction,
+            direction: strtolower($direction),
         );
     }
 
@@ -79,21 +87,15 @@ class DataTableFactory
         return false;
     }
 
-    private function stripSearchMarker(array $criteria): array
+    private function rowToDisplay(array $row, $metadata, array $columns): array
     {
-        unset($criteria['__search']);
-
-        return $criteria;
-    }
-
-    private function entityToRow(object $entity, $metadata, array $columns): array
-    {
-        $row = [];
+        $display = [];
 
         foreach ($columns as $column) {
-            $row[$column['key']] = $metadata->getFieldValue($entity, $column['key']);
+            $columnName = $metadata->getColumnName($column['key']);
+            $display[$column['key']] = $row[$columnName] ?? null;
         }
 
-        return $row;
+        return $display;
     }
 }
