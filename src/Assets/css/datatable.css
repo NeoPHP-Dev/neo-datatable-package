@@ -1,0 +1,122 @@
+.dt-wrapper {
+    --dt-bg: #ffffff;
+    --dt-bg-alt: #f9fafb;
+    --dt-border: #e5e7eb;
+    --dt-text: #16181d;
+    --dt-text-muted: #6b7280;
+    --dt-accent: #5b5fef;
+    --dt-radius: 8px;
+
+    font-family: inherit;
+    color: var(--dt-text);
+}
+
+.dt-wrapper * { box-sizing: border-box; }
+
+.dt-search-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.dt-search-input {
+    flex: 1;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--dt-border);
+    border-radius: var(--dt-radius);
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.dt-search-input:focus { border-color: var(--dt-accent); }
+
+.dt-search-btn {
+    padding: 0.55rem 1.1rem;
+    background: var(--dt-accent);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--dt-radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.dt-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--dt-bg);
+    border: 1px solid var(--dt-border);
+    border-radius: var(--dt-radius);
+    overflow: hidden;
+}
+
+.dt-th {
+    text-align: left;
+    padding: 0.7rem 1rem;
+    background: var(--dt-bg-alt);
+    font-size: 0.72rem;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--dt-text-muted);
+    border-bottom: 1px solid var(--dt-border);
+}
+
+.dt-th-active { color: var(--dt-accent); }
+
+.dt-sort-link {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.dt-sort-arrow { font-size: 0.7rem; }
+
+.dt-td {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--dt-border);
+}
+
+.dt-row:last-child .dt-td { border-bottom: none; }
+.dt-row:hover { background: var(--dt-bg-alt); }
+
+.dt-empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--dt-text-muted);
+    font-size: 0.85rem;
+}
+
+.dt-pagination { margin-top: 1rem; }
+
+.dt-pagination .pagination {
+    display: flex;
+    gap: 0.3rem;
+    list-style: none;
+    padding: 0;
+}
+
+.dt-pagination .pagination a,
+.dt-pagination .pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 0.5rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--dt-text);
+}
+
+.dt-pagination .pagination a:hover { background: var(--dt-bg-alt); }
+.dt-pagination .pagination a.active {
+    background: var(--dt-accent);
+    color: #ffffff;
+}
+
+.dt-pagination .pagination-gap { color: var(--dt-text-muted); }
