@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Vendor\NeoPHP\SkeletonPackage;
+namespace Vendor\NeoPHP\DataTablePackage;
 
 use Neo\Core\Package\Abstract\AbstractPackage;
 
-final class NeoSkeletonPackage extends AbstractPackage
+final class NeoDataTablePackage extends AbstractPackage
 {
     public function getName(): string
     {
-        return 'Skeleton';
+        return 'DataTable';
     }
 
     public function getPath(): string
