@@ -11,6 +11,9 @@ use Neo\Core\Database\Pagination\Paginator;
 
 class DataTableFactory
 {
+    /** @var list<array{entityClass: class-string, search: string, sort: string|null, direction: string, page: int, perPage: int, totalItems: int, duration: float}> */
+    private static array $tables = [];
+
     public function __construct(
         private EntityManager $em,
         private DatabaseManager $db,
@@ -23,6 +26,8 @@ class DataTableFactory
         array $searchableFields = [],
         int $perPage = 20,
     ): DataTableResult {
+        $start = microtime(true);
+
         $metadata = $this->em->getClassMetadata($entityClass);
 
         $search = trim($queryParams['search'] ?? '');
@@ -64,6 +69,17 @@ class DataTableFactory
             $paginator->getPerPage(),
         );
 
+        self::$tables[] = [
+            'entityClass' => $entityClass,
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => strtolower($direction),
+            'page' => $page,
+            'perPage' => $perPage,
+            'totalItems' => $paginator->getTotalItems(),
+            'duration' => round((microtime(true) - $start) * 1000, 2),
+        ];
+
         return new DataTableResult(
             columns: array_map(
                 fn(array $c) => ['key' => $c['key'], 'label' => $c['label'], 'sortable' => $c['sortable'] ?? false],
@@ -97,5 +113,13 @@ class DataTableFactory
         }
 
         return $display;
+    }
+
+    /**
+     * @return list<array{entityClass: class-string, search: string, sort: string|null, direction: string, page: int, perPage: int, totalItems: int, duration: float}>
+     */
+    public static function getTables(): array
+    {
+        return self::$tables;
     }
 }
