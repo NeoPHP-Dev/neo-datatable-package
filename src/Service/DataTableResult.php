@@ -6,7 +6,7 @@ namespace Vendor\NeoPHP\DataTablePackage\Service;
 
 use Neo\Core\Database\Pagination\Paginator;
 
-readonly class DataTableResult
+class DataTableResult
 {
     public function __construct(
         public array $columns,
