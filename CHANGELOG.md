@@ -1,3 +1,7 @@
+## v0.4.1 — 2026-08-16
+
+- refactor: normalize namespace/directory naming to singular
+
 ## v0.4.0 — 2026-08-09
 
 - feat: add DataTableCollector, log entity/search/sort/pagination context per table built
